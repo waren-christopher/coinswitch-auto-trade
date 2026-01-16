@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Michael Vijay API Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <h1 class="cyber-logo">Michael Vijay CoinSwitch API Panel</h1>
+  </header>
+
+  <section class="quick-buttons">
+    <h3>Quick API Calls</h3>
+    <div class="button-grid">
+      <button class="quick-btn" data-api="broker_balance+GET+/api/v2/me/balance/+publickey+secretkey">Get Balance</button>
+      <button class="quick-btn" data-api="lis_all_orders+GET+/api/v2/me/orders?onlyOpen=false&type=LIMIT+publickey+secretkey">List All Orders</button>
+      <button class="quick-btn" data-api="master_balance+GET+/api/v1/master/me/getBalance/+master_publickey+master_privatekey">Master Balance</button>
+      <button class="transaction-btn" style="background:#22c55e;" data-api="cancel_order+DELETE+/api/v1/orders/+publickey+secretkey">Cancel Order</button>
+      <button class="quick-btn" data-api="cancel_all_order+DELETE+/api/v1/orders/cancelAll?instrument=USDT/INR+publickey+secretkey" data-confirm="true">Cancel all usdt/inr Order</button>
+      <button class="quick-btn" data-api="recent_orders+GET+/api/v1/me/orders/?onlyOpen=false&type=LIMIT+publickey+secretkey">Recent Order Details</button>
+    </div>
+  </section>
+
+  <section class="transaction-buttons">
+    <h3>Crypto Transactions</h3>
+    <div class="button-grid">
+      <button class="transaction-btn" data-api="create_market_order+POST+/api/v1/orders/+publickey+secretkey">Create Market Order</button>
+      <button class="transaction-btn" data-api="create_limit_order+POST+/api/v1/orders/+publickey+secretkey">Create Limit Order</button>
+      <button class="transaction-btn" data-api="transfer_master_to_broker+POST+/api/v1/master/me/transferFunds+master_publickey+master_privatekey">Transfer Master to Broker</button> 
+      <button class="transaction-btn" data-api="crypto_withdrawal+POST+/api/v1/me/withdrawal+master_publickey+master_privatekey">Crypto Withdrawal</button>
+      <button class="transaction-btn" data-api="transfer_broker_to_master+POST+/api/v1/master/me/transferFunds+master_publickey+master_privatekey">Transfer Broker to Master</button>
+    </div>
+  </section>
+
+  <section class="terminal">
+    <form method="POST" id="apiForm">
+      {% csrf_token %}
+      <div class="form-grid" id="inputFields"></div>
+      <button type="submit" class="execute-btn">
+        <i class="fas fa-bolt"></i> EXECUTE
+      </button>
+    </form>
+  </section>
+
+  <section class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Processing API request…</p>
+  </section>
+
+  <section class="response-section" id="responseSection">
+    <div class="response-header">
+      <h3>API RESPONSE</h3>
+      <div id="statusCode" class="status-badge"></div>
+    </div>
+    <pre id="responseBox"></pre>
+  </section>
+
+</div>
+
+<div id="customModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-icon">⚠️</div>
+    <h3>Confirmation Required</h3>
+    <p>This will <b>CANCEL ALL ORDERS</b>.<br>This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="modalCancel" class="modal-btn cancel">No, Go Back</button>
+      <button id="modalConfirm" class="modal-btn confirm">Yes, Execute</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.APP_CONTEXT = {
+    method: "{{ request.method }}",
+    response: "{{ response|escapejs }}"
+  }
+</script>
+
+<script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>
