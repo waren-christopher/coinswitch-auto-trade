@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ================================= */
     const transactionDefaults = {
         crypto_withdrawal: { amount: "", assetName: "USDT", chain: "BSC", address: "ledger address", subaddress: "" },
-        transfer_broker_to_master: { assetName: "USDT", amount: "", fromID: "brokerid", toID: 'masterid' },
-        transfer_master_to_broker: { assetName: "INR", amount: "", fromID: "masterid", toID: 'brokerid' },
+        transfer_broker_to_master: { amount: "", assetName: "USDT", fromID: "brokerid", toID: 'masterid' },
+        transfer_master_to_broker: { amount: "", assetName: "INR", fromID: "masterid", toID: 'brokerid' },
         create_market_order: { quantity: "", bestQuantity: "", type: "market", side: "BUY", instrument: "USDT/INR", quantityType: "QUOTE", bestQuantityType: "QUOTE", username: "warenx1" },
         create_limit_order: { limitPrice: "", quantity: "", type: "limit", side: "BUY", instrument: "USDT/INR", quantityType: "QUOTE", username: "warenx1" },
         cancel_order: { orderId: "" }
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ================================
-       DISPLAY RESPONSE
+       DISPLAY RESPONSE (With Corrected Regex)
     ================================= */
     function displayFormattedResponse(rawData, httpStatus) {
         loading.style.display = "none";
@@ -50,11 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let finalStatus = httpStatus;
         let jsonObject = rawData;
 
+        // 1. Parse JSON to find internal status
         try {
             if (typeof rawData === "string") {
                 jsonObject = JSON.parse(rawData);
             }
-            // Check internal status code
             if (jsonObject && jsonObject.status !== undefined) {
                 finalStatus = parseInt(jsonObject.status);
             }
@@ -62,14 +62,27 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Response was not JSON", e);
         }
 
+        // 2. Status Badge
         const isSuccess = finalStatus === 200;
         statusCodeBox.textContent = finalStatus + (isSuccess ? " OK" : "");
         statusCodeBox.style.color = isSuccess ? "#22c55e" : "#ef4444";
         statusCodeBox.style.borderColor = isSuccess ? "#22c55e" : "#ef4444";
 
+        // 3. Render Highlighting + Inject Copy Button
         try {
             const jsonString = typeof jsonObject === "object" ? JSON.stringify(jsonObject, null, 2) : jsonObject;
-            responseBox.innerHTML = syntaxHighlight(jsonString);
+            let htmlContent = syntaxHighlight(jsonString);
+
+            // --- ✅ FIXED REGEX HERE ---
+            // This now correctly expects the colon (:) inside the span
+            htmlContent = htmlContent.replace(
+                /<span class="json-key">"orderId":<\/span>\s*<span class="json-string">"(.*?)"<\/span>/g, 
+                function(match, idValue) {
+                    return `${match} <button class="copy-icon-btn" onclick="window.copyText('${idValue}')" title="Copy Order ID"><i class="fas fa-copy"></i></button>`;
+                }
+            );
+
+            responseBox.innerHTML = htmlContent;
         } catch {
             responseBox.textContent = rawData;
         }
@@ -202,4 +215,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!validateRequiredFields(formData)) return;
         performApiCall(formData);
     });
+
+    /* ================================
+       HELPER: COPY TEXT
+       (Attached to window so HTML onclick can see it)
+    ================================= */
+    window.copyText = function(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            console.log("Copied ID:", text);
+        }).catch(err => {
+            console.error("Failed to copy:", err);
+        });
+    };
 });

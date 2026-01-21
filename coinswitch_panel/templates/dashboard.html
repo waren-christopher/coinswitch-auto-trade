@@ -22,12 +22,11 @@
   <section class="quick-buttons">
     <h3>Quick API Calls</h3>
     <div class="button-grid">
-      <button class="quick-btn" data-api="broker_balance+GET+/api/v2/me/balance/+publickey+secretkey">Get Balance</button>
-      <button class="quick-btn" data-api="lis_all_orders+GET+/api/v2/me/orders?onlyOpen=false&type=LIMIT+publickey+secretkey">List All Orders</button>
+      <button class="quick-btn" data-api="broker_balance+GET+/api/v2/me/balance/+publickey+secretkey">Broker Balance</button>
       <button class="quick-btn" data-api="master_balance+GET+/api/v1/master/me/getBalance/+master_publickey+master_privatekey">Master Balance</button>
+      <button class="quick-btn" data-api="recent_orders+GET+/api/v1/me/orders/?onlyOpen=false&type=LIMIT+publickey+secretkey">Recent Order Details</button>
       <button class="transaction-btn" style="background:#22c55e;" data-api="cancel_order+DELETE+/api/v1/orders/+publickey+secretkey">Cancel Order</button>
       <button class="quick-btn" data-api="cancel_all_order+DELETE+/api/v1/orders/cancelAll?instrument=USDT/INR+publickey+secretkey" data-confirm="true">Cancel all usdt/inr Order</button>
-      <button class="quick-btn" data-api="recent_orders+GET+/api/v1/me/orders/?onlyOpen=false&type=LIMIT+publickey+secretkey">Recent Order Details</button>
     </div>
   </section>
 

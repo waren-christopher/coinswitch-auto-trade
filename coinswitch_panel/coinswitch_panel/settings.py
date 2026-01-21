@@ -34,8 +34,15 @@ SECRET_KEY = 'django-insecure-+r+50$cf%hn=)z66k##p=x5rwcbx3m#r1)*=(zb(e9syuk4pxc
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "orders.nuvoraecom.site",
+]
 
-ALLOWED_HOSTS = []
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+# ALLOWED_HOSTS = []
 
 
 # Application definition

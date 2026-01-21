@@ -6,10 +6,6 @@ import time
 HOST = "127.0.0.1"
 PORT = 6969
 
-import json
-from cryptography.hazmat.primitives.asymmetric import ed25519
-
-
 def django_generate_signatures(private_key_hex: str, sign_params: dict) -> str:
     """
     Generate Ed25519 signature using:
@@ -55,7 +51,6 @@ def django_generate_signatures(private_key_hex: str, sign_params: dict) -> str:
     # Sign
     signature = private_key_obj.sign(to_sign)
     return signature.hex()
-
 
 
 def generate_signature(private_key_hex: str, sign_params: dict) -> str:

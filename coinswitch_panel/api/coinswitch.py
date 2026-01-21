@@ -5,8 +5,6 @@ BASE_URL = "https://exchange.coinswitch.co"
 def broker_balance(headers,body):
     return requests.get(f"{BASE_URL}/api/v2/me/balance/", headers=headers)
 
-def lis_all_orders(headers,body):
-    return requests.get(f"{BASE_URL}/api/v2/me/orders?onlyOpen=false&type=LIMIT", headers=headers)
 
 def master_balance(headers,body):
     return requests.get(f"{BASE_URL}/api/v1/master/me/getBalance/", headers=headers)

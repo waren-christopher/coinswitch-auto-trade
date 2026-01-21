@@ -245,3 +245,24 @@ pre{
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
+/* Copy Button Styles */
+.copy-icon-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+    padding: 2px 5px;
+}
+
+.copy-icon-btn:hover {
+    color: #38bdf8; /* Blue on hover */
+    transform: scale(1.1);
+}
+
+.copy-icon-btn:active {
+    color: #22c55e; /* Green on click */
+}
