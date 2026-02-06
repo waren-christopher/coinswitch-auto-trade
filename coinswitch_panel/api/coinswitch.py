@@ -33,6 +33,9 @@ def crypto_withdrawal(headers,body):
 def transfer_broker_to_master(headers,body):
     return requests.post(f"{BASE_URL}/api/v1/master/me/transferFunds",json=body, headers=headers)
 
+def inr_withdrawal(headers,body):
+    return requests.post(f"{BASE_URL}/api/v1/me/inrWithdrawal",json=body, headers=headers)
+
 
 
 

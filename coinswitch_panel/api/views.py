@@ -16,9 +16,9 @@ def dashboard(request):
     if request.method == "POST":
         api_action = request.POST.get('api')
         api,method,url_path,publickey,secretkey=api_action.split("+")
-        print(request.POST)
-
+        
     timestamp = str(int(time.time()))
+
     
     try:
        body = {k: v for k, v in request.POST.items() if k not in ('api', 'csrfmiddlewaretoken','secretkey','publickey')}
@@ -49,7 +49,7 @@ def dashboard(request):
         "message": body,
         "timestamp": timestamp,
     }
-    print('payload is: ',payload,os.getenv('secretkey'))
+   # print('payload is: ',payload,os.getenv('secretkey'))
     signature = signature_server.django_generate_signatures(os.getenv(secretkey), payload)
 
     headers = {
