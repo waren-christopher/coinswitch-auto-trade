@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
             toID: "brokerid"
         },
 
-        create_market_order: {
+        buy_market_order: {
             quantity: "",
             bestQuantity: "",
             type: "market",
@@ -55,13 +55,34 @@ document.addEventListener("DOMContentLoaded", () => {
             username: "warenx1"
         },
 
-        create_limit_order: {
+        buy_limit_order: {
             limitPrice: "",
             quantity: "",
             type: "limit",
             side: "BUY",
             instrument: "USDT/INR",
             quantityType: "QUOTE",
+            username: "warenx1"
+        },
+
+        sell_market_order: {
+            quantity: "",
+            bestQuantity: "",
+            type: "market",
+            side: "SELL",
+            instrument: "USDT/INR",
+            quantityType: "BASE",
+            bestQuantityType: "BASE",
+            username: "warenx1"
+        },
+
+        sell_limit_order: {
+            limitPrice: "",
+            quantity: "",
+            type: "limit",
+            side: "SELL",
+            instrument: "USDT/INR",
+            quantityType: "BASE",
             username: "warenx1"
         },
 

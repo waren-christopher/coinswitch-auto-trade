@@ -176,7 +176,7 @@ pre{
   font-weight:700;
   border:none;
   cursor:pointer;
-  background:#22c55e;
+  background:#22b5c5;
   color:#020617;
   border-radius:6px;
 }
@@ -265,4 +265,30 @@ pre{
 
 .copy-icon-btn:active {
     color: #22c55e; /* Green on click */
+}
+
+
+/* ================================
+   BUY / SELL Button Colors
+================================ */
+
+/* BUY buttons → GREEN */
+button[data-api^="buy_"] {
+    background: #22c55e;          /* Green */
+    color: #020617;
+}
+
+/* SELL buttons → RED */
+button[data-api^="sell_"] {
+    background: #ef4444;          /* Red */
+    color: #020617;
+}
+
+/* Optional: hover effect */
+button[data-api^="buy_"]:hover {
+    filter: brightness(1.1);
+}
+
+button[data-api^="sell_"]:hover {
+    filter: brightness(1.1);
 }

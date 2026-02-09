@@ -34,10 +34,10 @@ def dashboard(request):
            body={}
        if api == 'crypto_withdrawal':
            body['amount'] = float(body['amount']) if '.' in body['amount'] else int(body['amount']) #handle integer and fload values 
-       if api == 'create_market_order' or api == 'create_limit_order':  #calculate trading fee of 0.15%
+       if api == 'buy_market_order' or api == 'buy_limit_order' or api == 'sell_market_order' or api == 'sell_limit_order':  #calculate trading fee of 0.15%
            fee=float(round(float(body['quantity']) * 0.0015, 2)) if '.' in body['quantity'] else int(int(body['quantity']) * 0.0015)
            body['quantity']=str(float(body['quantity']) - fee if '.' in body['quantity'] else int(body['quantity']) - fee)
-           api == 'create_market_order' and body.update({'bestQuantity': body['quantity']})
+           api == 'buy_market_order' or api == 'sell_market_order' and body.update({'bestQuantity': body['quantity']})
  
     except Exception as e:
         print(str(e))
@@ -49,7 +49,8 @@ def dashboard(request):
         "message": body,
         "timestamp": timestamp,
     }
-   # print('payload is: ',payload,os.getenv('secretkey'))
+    # print('payload is: ',payload,os.getenv('secretkey'))
+    # return
     signature = signature_server.django_generate_signatures(os.getenv(secretkey), payload)
 
     headers = {

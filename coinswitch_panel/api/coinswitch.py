@@ -5,7 +5,6 @@ BASE_URL = "https://exchange.coinswitch.co"
 def broker_balance(headers,body):
     return requests.get(f"{BASE_URL}/api/v2/me/balance/", headers=headers)
 
-
 def master_balance(headers,body):
     return requests.get(f"{BASE_URL}/api/v1/master/me/getBalance/", headers=headers)
 
@@ -18,10 +17,10 @@ def cancel_all_order(headers,body):
 def recent_orders(headers,body):
     return requests.get(f"{BASE_URL}/api/v1/me/orders/?onlyOpen=false&type=LIMIT", headers=headers)
 
-def create_market_order(headers,body):
+def buy_market_order(headers,body):
     return requests.post(f"{BASE_URL}/api/v1/orders/",json=body, headers=headers)
 
-def create_limit_order(headers,body):
+def buy_limit_order(headers,body):
     return requests.post(f"{BASE_URL}/api/v1/orders/",json=body, headers=headers)
 
 def transfer_master_to_broker(headers,body):
@@ -35,6 +34,12 @@ def transfer_broker_to_master(headers,body):
 
 def inr_withdrawal(headers,body):
     return requests.post(f"{BASE_URL}/api/v1/me/inrWithdrawal",json=body, headers=headers)
+
+def sell_market_order(headers,body):
+    return requests.post(f"{BASE_URL}/api/v1/orders/",json=body, headers=headers)
+
+def sell_limit_order(headers,body):
+    return requests.post(f"{BASE_URL}/api/v1/orders/",json=body, headers=headers)
 
 
 
