@@ -65,24 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
             username: "warenx1"
         },
 
-        sell_market_order: {
-            quantity: "",
-            bestQuantity: "",
-            type: "market",
-            side: "SELL",
-            instrument: "USDT/INR",
-            quantityType: "BASE",
-            bestQuantityType: "BASE",
-            username: "warenx1"
-        },
-
         sell_limit_order: {
             limitPrice: "",
             quantity: "",
             type: "limit",
             side: "SELL",
             instrument: "USDT/INR",
-            quantityType: "BASE",
+            quantityType: "QUOTE",
             username: "warenx1"
         },
 
