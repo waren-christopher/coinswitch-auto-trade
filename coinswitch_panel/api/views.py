@@ -49,8 +49,8 @@ def dashboard(request):
         "message": body,
         "timestamp": timestamp,
     }
-    print('payload is: ',payload,os.getenv('secretkey'))
-    return
+    # print('payload is: ',payload,os.getenv('secretkey'))
+    # return
     signature = signature_server.django_generate_signatures(os.getenv(secretkey), payload)
 
     headers = {
