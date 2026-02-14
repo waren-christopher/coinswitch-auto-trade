@@ -292,3 +292,20 @@ button[data-api^="buy_"]:hover {
 button[data-api^="sell_"]:hover {
     filter: brightness(1.1);
 }
+
+
+.account-dropdown {
+    width: 100%;
+    padding: 16px;
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #e5e7eb;
+    font-family: Roboto, sans-serif;
+}
+
+.account-dropdown:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56,189,248,.25);
+}

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+
     const form = document.getElementById("apiForm");
     const loading = document.getElementById("loading");
     const responseSection = document.getElementById("responseSection");
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
        TRANSACTION DEFAULTS
     ================================= */
     const transactionDefaults = {
+
         crypto_withdrawal: {
             amount: "",
             assetName: "USDT",
@@ -26,8 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         inr_withdrawal: {
             amount: "",
-            accountNumber_display: "warenx tmb",       // UI label
-            accountNumber: "311536374533912"            // sent to backend
+            accountNumber_display: "select bank"
         },
 
         transfer_broker_to_master: {
@@ -101,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
        DISPLAY RESPONSE
     ================================= */
     function displayFormattedResponse(rawData, httpStatus) {
+
         loading.style.display = "none";
         responseSection.style.display = "block";
 
@@ -115,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch {}
 
         const isSuccess = finalStatus === 200;
+
         statusCodeBox.textContent = finalStatus + (isSuccess ? " OK" : "");
         statusCodeBox.style.color = isSuccess ? "#22c55e" : "#ef4444";
         statusCodeBox.style.borderColor = isSuccess ? "#22c55e" : "#ef4444";
@@ -134,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             responseBox.innerHTML = htmlContent;
+
         } catch {
             responseBox.textContent = rawData;
         }
@@ -143,6 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
        API CALL
     ================================= */
     async function performApiCall(formData) {
+
         loading.style.display = "block";
         responseSection.style.display = "none";
 
@@ -172,9 +177,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ================================
-       RENDER INPUTS (UPDATED)
+       RENDER INPUTS
     ================================= */
     function renderInputs(apiName, defaults) {
+
         inputFields.innerHTML = "";
 
         let apiInput = document.querySelector("input[name='api']");
@@ -188,26 +194,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (const [key, value] of Object.entries(defaults)) {
 
-            // 🔐 INR account display logic
+            /* 🔥 INR WITHDRAWAL DROPDOWN */
             if (key === "accountNumber_display") {
+
                 const group = document.createElement("div");
                 group.className = "form-group";
+
                 group.innerHTML = `
-                    <span class="input-label">ACCOUNT NUMBER <span style="color:#ef4444;"> *</span></span>
-                    <input value="${value}" readonly />
-                    <input type="hidden" name="accountNumber" value="${defaults.accountNumber}" />
+                    <span class="input-label">
+                        ACCOUNT NUMBER <span style="color:#ef4444;"> *</span>
+                    </span>
+
+                    <select id="accountSelect" class="account-dropdown">
+                        <option value="311536374533912">warenx tmb</option>
+                        <option value="136628600000031">warenx yes bank</option>
+                    </select>
+
+                    <input type="hidden" name="accountNumber" id="hiddenAccountNumber" value="311536374533912" />
                 `;
+
                 inputFields.appendChild(group);
+
+                const select = group.querySelector("#accountSelect");
+                const hiddenInput = group.querySelector("#hiddenAccountNumber");
+
+                select.addEventListener("change", () => {
+                    hiddenInput.value = select.value;
+                });
+
                 continue;
             }
-
-            if (key === "accountNumber") continue;
 
             const isOptional = optionalFields.includes(key);
             const isLocked = ["address", "fromID", "toID"].includes(key);
 
             const group = document.createElement("div");
             group.className = "form-group";
+
             group.innerHTML = `
                 <span class="input-label">
                     ${key.toUpperCase()}
@@ -217,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </span>
                 <input name="${key}" value="${value}" ${isLocked ? "readonly" : ""} />
             `;
+
             inputFields.appendChild(group);
         }
 
@@ -248,14 +272,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ================================
-       MAIN CLICK HANDLER
+       BUTTON CLICK HANDLER
     ================================= */
     document.addEventListener("click", e => {
+
         const btn = e.target.closest("[data-api]");
         if (!btn) return;
 
         document.querySelectorAll(".quick-btn, .transaction-btn")
             .forEach(b => b.classList.remove("active-btn"));
+
         btn.classList.add("active-btn");
 
         const api = btn.dataset.api;
@@ -280,6 +306,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    /* ================================
+       FORM SUBMIT
+    ================================= */
     form.addEventListener("submit", e => {
         e.preventDefault();
         const formData = new FormData(form);
@@ -293,4 +322,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.copyText = function (text) {
         navigator.clipboard.writeText(text);
     };
+
 });
