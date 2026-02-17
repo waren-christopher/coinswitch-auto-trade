@@ -68,8 +68,12 @@ def dashboard(request):
 
     try:
         data=response.json()
+        if api == 'crypto_withdrawal' or api == 'inr_withdrawal':
+            with open('request.txt', 'a', encoding='utf-8') as file:
+               file.write(f"{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())} {response.text}\n")
     except Exception:
         data=response.text
+
     return JsonResponse({"data":data ,"status":response.status_code})
 
 
