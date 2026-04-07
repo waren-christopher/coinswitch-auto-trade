@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><title>Auto Trade | Terminal</title>
+  {% load static %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <style>
+    .active-btn { border: 2px solid #fff; box-shadow: 0 0 15px rgba(255,255,255,0.3); transform: scale(1.05); font-weight: bold; }
+    .error-message { color: #ef4444; font-size: 10px; margin-top: 5px; display: none; font-weight: 600; text-transform: uppercase; }
+    .input-error { border-color: #ef4444 !important; }
+    
+    /* Updated Professional Status Display */
+    #statusDisplay { 
+        padding: 12px 16px; 
+        margin: 20px auto 0; /* Pushes it down below the buttons */
+        border-radius: 6px; 
+        text-align: center; 
+        font: 700 13px 'Segoe UI', system-ui, sans-serif; 
+        display: none; 
+        letter-spacing: 0.5px; 
+        width: 100%; 
+        box-sizing: border-box;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .status-success { 
+        background: rgba(16, 185, 129, 0.1); 
+        color: #34d399; 
+        border: 1px solid rgba(16, 185, 129, 0.3); 
+    }
+    .status-error { 
+        background: rgba(239, 68, 68, 0.1); 
+        color: #f87171; 
+        border: 1px solid rgba(239, 68, 68, 0.3); 
+    }
+
+    .action-container { display: flex; justify-content: center; margin-top: 20px; width: 100%; }
+    .btn-small { width: 120px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; transition: 0.2s; color: #fff; }
+    #startBtn { background: #22c55e; } #stopBtn { background: #ef4444; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 class="cyber-logo">⚡ Auto Trade</h1>
+  
+  <div class="button-grid">
+    <button id="buyBtn" class="transaction-btn active-btn" style="background:#22c55e;">BUY</button>
+    <button id="sellBtn" class="transaction-btn" style="background:#ef4444;">SELL</button>
+  </div>
+  
+  <form id="autoTradeForm" class="terminal">
+    <div class="form-grid">
+      <div class="form-group"><span class="input-label">PRICE RANGE *</span><input name="price_range" id="price_range"><div id="err_price_range" class="error-message">Required</div></div>
+      <div class="form-group"><span class="input-label">MIN QUANTITY *</span><input name="min_qty" id="min_qty" value="200"><div id="err_min_qty" class="error-message">Required</div></div>
+      <div class="form-group"><span class="input-label">QUANTITY *</span><input name="quantity" id="quantity"><div id="err_quantity" class="error-message">Required</div></div>
+      <div class="form-group"><span class="input-label">TYPE *</span><input name="type" value="limit" readonly></div>
+      <div class="form-group"><span class="input-label">SIDE *</span><input name="side" id="side" value="BUY" readonly></div>
+      <div class="form-group"><span class="input-label">INSTRUMENT *</span><input name="instrument" value="USDT/INR" readonly></div>
+      <div class="form-group"><span class="input-label">QUANTITY TYPE *</span><input name="quantityType " value="QUOTE" readonly></div>
+      <div class="form-group"><span class="input-label">USERNAME *</span><input name="username" value="warenx" readonly></div>
+    </div>
+    
+    <div class="action-container">
+      <button type="button" id="startBtn" class="btn-small">START</button>
+      <button type="button" id="stopBtn" class="btn-small" style="display:none;">STOP</button>
+    </div>
+
+    <div id="statusDisplay"></div>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    const $ = id => document.getElementById(id);
+    const btns = { start: $('startBtn'), stop: $('stopBtn'), buy: $('buyBtn'), sell: $('sellBtn') };
+    let pollInterval = null; 
+    
+    const showStatus = (m, err = false) => {
+        // Add icons based on error state
+        $('statusDisplay').innerHTML = err ? `⚠️ ${m}` : `✅ ${m}`;
+        $('statusDisplay').className = err ? 'status-error' : 'status-success';
+        $('statusDisplay').style.display = 'block';
+        // Note: setTimeout removed so message stays visible until next action
+    };
+
+    const toggleSide = (side) => {
+        $('side').value = side;
+        btns.buy.classList.toggle('active-btn', side === 'BUY');
+        btns.sell.classList.toggle('active-btn', side === 'SELL');
+    };
+
+    btns.buy.onclick = () => toggleSide('BUY');
+    btns.sell.onclick = () => toggleSide('SELL');
+
+    const api = async (url, body = null) => {
+        try {
+            const res = await fetch(url, { method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'}, body });
+            return { ok: res.ok, data: await res.json() };
+        } catch { return { ok: false, data: { msg: 'CONNECTION ERROR' } }; }
+    };
+
+    // Polling function to check backend status
+    const startPolling = () => {
+        if (pollInterval) clearInterval(pollInterval); 
+        
+        pollInterval = setInterval(async () => {
+            try {
+                const res = await fetch("/auto-trade-status");
+                const statusData = await res.json();
+                
+                // If backend says bot is no longer running
+                if (!statusData.running) {
+                    clearInterval(pollInterval);
+                    btns.start.style.display = 'flex';
+                    btns.stop.style.display = 'none';
+                    
+                    // Show the global message from the python thread
+                    if (statusData.message) {
+                        showStatus(statusData.message, true); 
+                    }
+                }
+            } catch (err) {
+                console.log("Error checking status:", err);
+            }
+        }, 2000); // Poll every 2 seconds
+    };
+
+    // Check status immediately on page load
+    const init = await fetch("/auto-trade-status").then(r => r.json()).catch(() => ({}));
+    if (init.running) { 
+        btns.start.style.display = 'none'; 
+        btns.stop.style.display = 'flex'; 
+        startPolling(); 
+    } else if (init.message) {
+        // Show any leftover messages on reload
+        showStatus(init.message, true);
+    }
+
+    btns.start.onclick = async () => {
+        // Clear any old messages when clicking start
+        $('statusDisplay').style.display = 'none'; 
+
+        let valid = true;
+        ['price_range', 'min_qty', 'quantity'].forEach(f => {
+            const v = $(f).value.trim();
+            $(f).classList.toggle('input-error', !v);
+            $(`err_${f}`).style.display = v ? 'none' : 'block';
+            if (!v) valid = false;
+        });
+        if (!valid) return;
+
+        const { ok, data } = await api('/start-auto-trade', new FormData($('autoTradeForm')));
+        
+        if (ok) { 
+            btns.start.style.display = 'none'; 
+            btns.stop.style.display = 'flex'; 
+            showStatus(data.msg || 'BOT STARTED');
+            startPolling(); 
+        } else {
+            showStatus(data.msg || 'FAILED TO START', true);
+        }
+    };
+
+    btns.stop.onclick = async () => {
+        const { ok, data } = await api('/stop-auto-trade');
+        
+        if (ok) { 
+            if (pollInterval) clearInterval(pollInterval); 
+            btns.start.style.display = 'flex'; 
+            btns.stop.style.display = 'none'; 
+            showStatus(data.msg || 'BOT STOPPED', true); // Show as alert
+        } else {
+            showStatus('ERROR STOPPING BOT', true);
+        }
+    };
+});
+</script>
+</body>
+</html>

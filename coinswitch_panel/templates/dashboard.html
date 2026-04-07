@@ -17,29 +17,33 @@
 
   <header class="header">
     <h1 class="cyber-logo">Michael Vijay CoinSwitch API Panel</h1>
+    <div style="position:absolute; top:30px; right:40px;">
+       <a href="auto-trade" class="quick-btn">⚡ Auto Trade</a>
+    </div>
   </header>
 
   <section class="quick-buttons">
     <h3>Quick API Calls</h3>
     <div class="button-grid">
-      <button class="quick-btn" data-api="broker_balance+GET+/api/v2/me/balance/+publickey+secretkey">Broker Balance</button>
-      <button class="quick-btn" data-api="master_balance+GET+/api/v1/master/me/getBalance/+master_publickey+master_privatekey">Master Balance</button>
-      <button class="quick-btn" data-api="recent_orders+GET+/api/v1/me/orders/?onlyOpen=false&type=LIMIT+publickey+secretkey">Recent Order Details</button>
-      <button class="transaction-btn" style="background:#22b5c5;" data-api="cancel_order+DELETE+/api/v1/orders/+publickey+secretkey">Cancel Order</button>
-      <button class="quick-btn" data-api="cancel_all_order+DELETE+/api/v1/orders/cancelAll?instrument=USDT/INR+publickey+secretkey" data-confirm="true">Cancel all usdt/inr Order</button>
+      <button class="quick-btn" data-api="broker_balance">Broker Balance</button>
+      <button class="quick-btn" data-api="master_balance">Master Balance</button>
+      <button class="quick-btn" data-api="recent_orders">Recent Order Details</button>
+      <button class="transaction-btn" style="background:#22b5c5;" data-api="cancel_order">Cancel Order</button>
+      <button class="quick-btn" data-api="cancel_all_order" data-confirm="true">Cancel all usdt/inr Order</button>
     </div>
   </section>
 
   <section class="transaction-buttons">
     <h3>Crypto Transactions</h3>
     <div class="button-grid">
-      <button class="transaction-btn" data-api="buy_market_order+POST+/api/v1/orders/+publickey+secretkey">BUY Market Order</button>
-      <button class="transaction-btn" data-api="buy_limit_order+POST+/api/v1/orders/+publickey+secretkey">BUY Limit Order</button>
-      <button class="transaction-btn" data-api="transfer_master_to_broker+POST+/api/v1/master/me/transferFunds+master_publickey+master_privatekey">Transfer Master to Broker</button> 
-      <button class="transaction-btn" data-api="crypto_withdrawal+POST+/api/v1/me/withdrawal+master_publickey+master_privatekey">Crypto Withdrawal</button>
-      <button class="transaction-btn" data-api="transfer_broker_to_master+POST+/api/v1/master/me/transferFunds+master_publickey+master_privatekey">Transfer Broker to Master</button>
-      <button class="transaction-btn" data-api="sell_limit_order+POST+/api/v1/orders/+publickey+secretkey">SELL Limit Order</button>
-      <button class="transaction-btn" data-api="inr_withdrawal+POST+/api/v1/me/inrWithdrawal+master_publickey+master_privatekey">INR Withdrawal</button>
+      <button class="transaction-btn" data-api="buy_market_order">BUY Market Order</button>
+      <button class="transaction-btn" data-api="buy_limit_order">BUY Limit Order</button>
+      <button class="transaction-btn" data-api="transfer_master_to_broker">Transfer Master to Broker</button> 
+      <button class="transaction-btn" data-api="crypto_withdrawal">Crypto Withdrawal</button>
+      <button class="transaction-btn" data-api="transfer_broker_to_master">Transfer Broker to Master</button>
+      <!-- <button class="transaction-btn" data-api="sell_market_order">SELL Market Order</button> -->
+      <button class="transaction-btn" data-api="sell_limit_order">SELL Limit Order</button>
+      <button class="transaction-btn" data-api="inr_withdrawal">INR Withdrawal</button>
     </div>
   </section>
 
