@@ -322,8 +322,8 @@ def auto_trade_status(request):
     return JsonResponse({"running": bot_running,"message": bot_message})
 
 
-def buy_sell_decision(side,competitor_price,limit_threshold,current_order_id):
-    global bot_message
+def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
+    global bot_message,current_order_id
     if side == 'buy':
         target_price = round(competitor_price + 0.01, 2)
         
@@ -331,8 +331,9 @@ def buy_sell_decision(side,competitor_price,limit_threshold,current_order_id):
         if target_price > limit_threshold:
             bot_message = f"Stopped: Target {target_price} exceeded max limit of {limit_threshold}."
             print(f"🛑 {bot_message}")
-            if current_order_id:
-                coinswitch.cancel_order({'orderId': current_order_id})
+            if order_id:
+                coinswitch.cancel_order({'orderId': order_id})
+                current_order_id = None
             return "price range reached"
         return target_price
     else: # sell
@@ -342,8 +343,9 @@ def buy_sell_decision(side,competitor_price,limit_threshold,current_order_id):
         if target_price < limit_threshold:
             bot_message = f"Stopped: Target {target_price} dropped below min limit of {limit_threshold}."
             print(f"🛑 {bot_message}")
-            if current_order_id:
-                coinswitch.cancel_order({'orderId': current_order_id})
+            if order_id:
+                coinswitch.cancel_order({'orderId': order_id})
+                current_order_id = None
             return "price range reached"
         return target_price
 
@@ -376,6 +378,10 @@ def replace_order(cancel_body,body):
         print("fixed quantity",actual_affordable_quant)   
         # 4. If we made it here, the math is 100% safe to send to the API!
         return str(round(actual_affordable_quant, 2))
+    except requests.exceptions.ConnectionError as e:
+            print(f"📡 [NETWORK] Connection dropped in replace_order. Will retry. Error: {str(e)}")
+            time.sleep(15)
+            return ""
     except Exception as e:
         print(f"💥 CRASH IN REPLACE BLOCK: {str(e)}") # <--- Now you will see the error!
         bot_running=False
@@ -425,7 +431,7 @@ def auto_trade_bot(price_range, min_qty, body):
 
             target_price=buy_sell_decision(side,competitor_price,limit_threshold,current_order_id)
             if target_price == "price range reached":
-                time.sleep(15)
+                time.sleep(7)
                 continue
             # 2. Determine our target price (+0.01 for buy, -0.01 for sell)
 
@@ -467,7 +473,7 @@ def auto_trade_bot(price_range, min_qty, body):
                             raw_quantity= float(float(trade_quantity) if balance > float(trade_quantity) else str(balance))
                             body['quantity'] = str(round(raw_quantity, 2))
                             latest_order_id = coinswitch.buy_limit_order(body).json() if side == 'buy' else coinswitch.sell_limit_order(body).json()
-                            print('re order placed successfully')
+                            print('order fullfilled so placed a new order')
                         
                             current_order_id = latest_order_id['data']['orderId'] 
                             current_placed_price = body['limitPrice']
@@ -515,6 +521,10 @@ def auto_trade_bot(price_range, min_qty, body):
             else:
                 print("✅ We are at the top of the book. Holding position.")
 
+        except requests.exceptions.ConnectionError as e:
+            print(f"📡 [NETWORK] Connection dropped in replace_order. Will retry. Error: {str(e)}")
+            time.sleep(15)
+
         except Exception as e:
             print(f"An error occurred: {e}")
             bot_message = f"Error: {str(e)}"
@@ -538,7 +548,6 @@ def dashboard(request):
         
         # Clean standard django/frontend keys from the payload
         body = {k: v for k, v in request.POST.items() if k not in ('api', 'csrfmiddlewaretoken')}
-        print(body)
         
         try:
             # Dynamically call the matching function in coinswitch.py
