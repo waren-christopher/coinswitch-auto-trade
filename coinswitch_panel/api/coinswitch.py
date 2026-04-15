@@ -95,8 +95,7 @@ def transfer_master_to_broker(body):
 
 def crypto_withdrawal(body):
     body['amount'] = float(body['amount']) if '.' in body['amount'] else int(body['amount'])
-    if 'address' not in body:
-        body['address'] = os.getenv('ledger_address')
+    body['address'] = os.getenv('ledger_address')
     url_path = "/api/v1/me/withdrawal"
     headers = _generate_headers("POST", url_path, body, "master_publickey", "master_privatekey")
     response = requests.post(f"{BASE_URL}{url_path}", json=body, headers=headers)

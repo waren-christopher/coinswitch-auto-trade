@@ -8,188 +8,6 @@ import random
 
 load_dotenv()
 
-# def forgot_password(request):
-#     context = {}
-
-#     if request.method == "POST":
-#         action = request.POST.get("action")
-#         username = request.POST.get("username")
-
-#         context["username"] = username
-
-#         # STEP 1 → SHOW CONFIRMATION
-#         if action == "check_user":
-#             try:
-#                 user = User.objects.get(username=username)
-#                 context["show_confirm"] = True
-#             except User.DoesNotExist:
-#                 context["error"] = "User not found"
-
-#         # STEP 2 → SEND OTP
-#         elif action == "send_otp":
-#  # otp = random.randint(100000, 999999)     
-#       # send_mail(
-#       # 'Your OTP Code',
-#       # f'''Hello dear user👋,
-      
-#       # Your One-Time Password (OTP) is:
-      
-#       # 👉 {otp}
-      
-#       # ⏳ This OTP is valid for 5 minutes.
-#       # ❗ Do not share this OTP with anyone.
-      
-#       # If you didn’t request this, please ignore this email.
-      
-#       # Thanks,
-#       # Your App Team 🚀''',
-#       # 'warenchrist767@gmail.com',
-#       # ['warenchrist00@gmail.com'],
-#       # fail_silently=False,
-#       #  )
-#       # print('orp send succesfully ',otp)
-#             context["show_otp"] = True
-
-#         # STEP 3 → VERIFY OTP
-#         elif action == "verify_otp":
-#             entered_otp = request.POST.get("otp")
-
-#             if entered_otp == request.session.get("otp"):
-#                 context["show_password"] = True
-#             else:
-#                 context["error"] = "Invalid OTP"
-#                 context["show_otp"] = True
-
-#         # STEP 4 → RESET PASSWORD
-#         elif action == "reset_password":
-#             password = request.POST.get("password")
-#             username = request.session.get("username")
-
-#             user = User.objects.get(username=username)
-#             user.set_password(password)
-#             user.save()
-
-#             return redirect("login")
-
-#     return render(request, "forgot_password.html", context)
-
-# def auto_trade(request):
-#     print(request.POST)
-#     return JsonResponse({
-#             "final_price": round(255, 2),
-#             "side": 'sjfksjf'
-#         })
-    
-#     if request.method == "POST":
-#         price_range = request.POST.get("price_range")
-#         min_qty = float(request.POST.get("min_qty"))
-#         quantity = request.POST.get("quantity")
-#         side = request.POST.get("side")
-
-#         min_price, max_price = map(float, price_range.split("-"))
-
-#         data = get_orderbook()  # your function
-#         best = data["data"]["sell"][0] if side == "BUY" else data["data"]["buy"][0]
-
-#         price = float(best[0])
-#         qty = float(best[1])
-
-#         if qty >= min_qty:
-#             price += 0.01
-
-#         if price > max_price:
-#             return JsonResponse({"msg": "Max price reached"})
-
-#         return JsonResponse({
-#             "final_price": round(price, 2),
-#             "side": side
-#         })
-    
-    
-# def auto_trade_page(request):
-#     return render(request, "auto_trade.html")
-
-
-
-
-
-
-# def dashboard(request):
-#     #for render html,css,js when refresh or access the site via browser
-#     if not request.session.get('user'):
-#         return redirect('login')
-#     if request.method == "GET":
-#         return render(request, "dashboard.html")
-        
-
-#     #get datas for generat signature from html 
-#     if request.method == "POST":
-#         api_action = request.POST.get('api')
-#         api,method,url_path,publickey,secretkey=api_action.split("+")
-        
-#     timestamp = str(int(time.time()))
-
-    
-#     try:
-#        body = {k: v for k, v in request.POST.items() if k not in ('api', 'csrfmiddlewaretoken','secretkey','publickey')}
-#        map = {'fromID': 'masterid' if api == 'transfer_master_to_broker' else 'brokerid',
-#               'toID': 'brokerid' if api == 'transfer_master_to_broker' else 'masterid',
-#               'address': 'ledger_address', }
-#        #get values from .env file
-#        for body_key, env_key in map.items():
-#            if body_key in body:
-#                body[body_key] = os.getenv(env_key)
-#        if api == 'cancel_order':
-#            url_path ,orderid=url_path + body['orderId'], body['orderId']   #merge urlpath and order id to pass cancel order function 
-#            body={}
-#        if api == 'crypto_withdrawal':
-#            body['amount'] = float(body['amount']) if '.' in body['amount'] else int(body['amount']) #handle integer and fload values 
-#        if api == 'buy_market_order' or api == 'buy_limit_order' or api == 'sell_limit_order':  #calculate trading fee of 0.15%
-#            fee=float(round(float(body['quantity']) * 0.0015, 2)) if '.' in body['quantity'] else int(int(body['quantity']) * 0.0015)
-#            body['quantity']=str(float(body['quantity']) - fee if '.' in body['quantity'] else int(body['quantity']) - fee)
-#            api == 'buy_market_order' and body.update({'bestQuantity': body['quantity']})
- 
-#     except Exception as e:
-#         print(str(e))
-#         body = {}
-
-#     payload = {
-#         "method": method,
-#         "urlPath": url_path,
-#         "message": body,
-#         "timestamp": timestamp,
-#     }
-#     # print('payload is: ',payload,os.getenv('secretkey'))
-#     # return
-#     signature = signature_server.django_generate_signatures(os.getenv(secretkey), payload)
-
-#     headers = {
-#     "Content-Type": "application/json",
-#     "connection" : "keep-alive",
-#     "Accept": "application/json",
-#     "CSX-ACCESS-KEY" : os.getenv(publickey),  
-#     "CSX-SIGNATURE" : signature,
-#     "CSX-ACCESS-TIMESTAMP" : timestamp,
-#      }
-#   #  return
-#     body=orderid if api == 'cancel_order' else body        #for send order id to function
-#     response=getattr(coinswitch, api)(headers,body) 
-    
-
-#     try:
-#         data=response.json()
-#        # print('ksdjfsjf',data)
-#         if api == 'crypto_withdrawal' or api == 'inr_withdrawal':
-#             with open('request.txt', 'a', encoding='utf-8') as file:
-#                file.write(f"{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())} {response.text}\n")
-#     except Exception:
-#         data=response.text
-#     return JsonResponse({"data":data ,"status":response.status_code})
-
-
-
-# import pandas as pd
-# from datetime import datetime, timezone, timedelta
 
 def analyze_bot_performance(api_json_response, export_filename="coinswitch_trade_history.xlsx"):
     orders = api_json_response.get('data', {}).get('data', [])
@@ -366,7 +184,7 @@ def replace_order(cancel_body,body):
         quant=float(body['quantity']) - filled_quantity 
         actual_affordable_quant = quant if balance >= quant else balance
         # 3. STEP 2: Is this final amount allowed by CoinSwitch?
-        if 300 > quant and balance > float(trade_quantity):
+        if 1000 > quant and balance > float(trade_quantity):
           print('getting total quantity from trade_quntity ',trade_quantity)
           return trade_quantity
         elif actual_affordable_quant < 300:
@@ -562,7 +380,7 @@ def dashboard(request):
                 data = response.text
                 
             return JsonResponse({"data": data, "status": response.status_code})
-            
+            ac
         except AttributeError:
             return JsonResponse({"error": f"API endpoint '{api_action}' not configured."}, status=400)
         except Exception as e:

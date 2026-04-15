@@ -4,46 +4,73 @@
   <meta charset="UTF-8"><title>Auto Trade | Terminal</title>
   {% load static %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
   <style>
-    .active-btn { border: 2px solid #fff; box-shadow: 0 0 15px rgba(255,255,255,0.3); transform: scale(1.05); font-weight: bold; }
-    .error-message { color: #ef4444; font-size: 10px; margin-top: 5px; display: none; font-weight: 600; text-transform: uppercase; }
-    .input-error { border-color: #ef4444 !important; }
+    /* Specific overrides for auto trade */
+    .error-message { 
+        color: #ef4444; 
+        font-size: 0.75rem; 
+        margin-top: 8px; 
+        display: none; 
+        font-weight: 600; 
+        text-transform: uppercase; 
+        position: absolute; 
+        bottom: -20px; 
+        left: 5px;
+    }
+    .input-error { 
+        border-color: #ef4444 !important; 
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+    }
     
-    /* Updated Professional Status Display */
     #statusDisplay { 
-        padding: 12px 16px; 
-        margin: 20px auto 0; /* Pushes it down below the buttons */
-        border-radius: 6px; 
+        padding: 16px; 
+        margin: 25px auto 0; 
+        border-radius: 12px; 
         text-align: center; 
-        font: 700 13px 'Segoe UI', system-ui, sans-serif; 
+        font: 600 1rem 'Inter', sans-serif; 
         display: none; 
         letter-spacing: 0.5px; 
         width: 100%; 
-        box-sizing: border-box;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        backdrop-filter: blur(8px);
+        animation: scaleIn 0.3s ease;
     }
+    
     .status-success { 
-        background: rgba(16, 185, 129, 0.1); 
-        color: #34d399; 
+        background: rgba(16, 185, 129, 0.15); 
+        color: #6ee7b7; 
         border: 1px solid rgba(16, 185, 129, 0.3); 
     }
+    
     .status-error { 
-        background: rgba(239, 68, 68, 0.1); 
-        color: #f87171; 
+        background: rgba(239, 68, 68, 0.15); 
+        color: #fca5a5; 
         border: 1px solid rgba(239, 68, 68, 0.3); 
     }
 
-    .action-container { display: flex; justify-content: center; margin-top: 20px; width: 100%; }
-    .btn-small { width: 120px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; transition: 0.2s; color: #fff; }
-    #startBtn { background: #22c55e; } #stopBtn { background: #ef4444; }
+    .action-container { 
+        display: flex; 
+        justify-content: center; 
+        margin-top: 30px; 
+        width: 100%; 
+    }
+    
+    /* We keep start/stop button background overrides because they specifically must be green/red */
+    #startBtn { background: linear-gradient(135deg, #10b981, #059669); } 
+    #stopBtn { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+    #stopBtn:hover { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5); }
+    
+    .form-grid { margin-bottom: 35px; } /* Give extra space for error msgs */
   </style>
 </head>
 <body>
 <div class="container">
-  <h1 class="cyber-logo">⚡ Auto Trade</h1>
+  <div class="header">
+      <h1 class="cyber-logo">⚡ Auto Trade</h1>
+  </div>
   
-  <div class="button-grid">
-    <button id="buyBtn" class="transaction-btn active-btn" style="background:#22c55e;">BUY</button>
-    <button id="sellBtn" class="transaction-btn" style="background:#ef4444;">SELL</button>
+  <div class="button-grid" style="margin-bottom: 30px;">
+    <button id="buyBtn" class="transaction-btn active-btn" style="border-left-color: #10b981;">BUY</button>
+    <button id="sellBtn" class="transaction-btn" style="border-left-color: #ef4444;">SELL</button>
   </div>
   
   <form id="autoTradeForm" class="terminal">
@@ -106,16 +133,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const res = await fetch("/auto-trade-status");
                 const statusData = await res.json();
                 
+                // Continuously update the UI with the latest bot message
+                if (statusData.message) {
+                    // Check if it's an error message or just normal status
+                    const isErr = !statusData.running && statusData.message.toLowerCase().includes('error');
+                    showStatus(statusData.message, isErr);
+                }
+
                 // If backend says bot is no longer running
                 if (!statusData.running) {
                     clearInterval(pollInterval);
                     btns.start.style.display = 'flex';
                     btns.stop.style.display = 'none';
-                    
-                    // Show the global message from the python thread
-                    if (statusData.message) {
-                        showStatus(statusData.message, true); 
-                    }
                 }
             } catch (err) {
                 console.log("Error checking status:", err);

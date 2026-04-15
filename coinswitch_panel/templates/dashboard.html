@@ -28,7 +28,7 @@
       <button class="quick-btn" data-api="broker_balance">Broker Balance</button>
       <button class="quick-btn" data-api="master_balance">Master Balance</button>
       <button class="quick-btn" data-api="recent_orders">Recent Order Details</button>
-      <button class="transaction-btn" style="background:#22b5c5;" data-api="cancel_order">Cancel Order</button>
+      <button class="transaction-btn" data-api="cancel_order">Cancel Order</button>
       <button class="quick-btn" data-api="cancel_all_order" data-confirm="true">Cancel all usdt/inr Order</button>
     </div>
   </section>
@@ -92,5 +92,20 @@
 </script>
 
 <script src="{% static 'js/dashboard.js' %}"></script>
+
+<!-- Visual Only: Highlight Clicked Buttons -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.button-grid').forEach(grid => {
+      const buttons = grid.querySelectorAll('button');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active-btn'));
+          btn.classList.add('active-btn');
+        });
+      });
+    });
+  });
+</script>
 </body>
 </html>

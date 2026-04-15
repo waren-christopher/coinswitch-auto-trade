@@ -12,3 +12,7 @@
 
 2026-04-02 12:13:06 {"message":"Withdrawal address is not whitelisted or active for master ID: 3027ca7b-fbe4-4e40-abea-41ee4fd50521"}
 
+2026-04-14 21:21:28 {"message":"Withdrawal address is not whitelisted or active for master ID: 3027ca7b-fbe4-4e40-abea-41ee4fd50521"}
+
+2026-04-15 18:26:45 {"message":"Withdrawal request processed successfully. Request ID: f4246b27-49a2-4fa6-9d52-0c7c52dbd978"}
+
