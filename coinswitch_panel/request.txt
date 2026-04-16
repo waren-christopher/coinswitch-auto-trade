@@ -16,3 +16,15 @@
 
 2026-04-15 18:26:45 {"message":"Withdrawal request processed successfully. Request ID: f4246b27-49a2-4fa6-9d52-0c7c52dbd978"}
 
+2026-04-15 20:00:28 {"message":"Withdrawal request processed successfully. Request ID: 110c57e1-e142-4b92-b387-005a861aedff"}
+
+2026-04-16 13:59:25 {"message":"Withdrawal request processed successfully. Request ID: 21bdb6d6-2b1f-4267-bfa7-dda72bdc6ad9"}
+
+2026-04-16 16:52:17 {"message":"Withdrawal request processed successfully. Request ID: fa479e89-be4a-43e4-b421-86089d0e46a3"}
+
+2026-04-16 17:52:39 {"message":"Insufficient funds"}
+
+2026-04-16 17:53:01 {"message":"More than one withdrawal triggered for same currency in 2 minutes"}
+
+2026-04-16 17:56:11 {"message":"Withdrawal request processed successfully. Request ID: a4053fc6-39aa-4b4b-a992-d687bc210e67"}
+
