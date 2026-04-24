@@ -17,7 +17,7 @@
 
   <header class="header">
     <h1 class="cyber-logo">Michael Vijay CoinSwitch API Panel</h1>
-    <div style="position:absolute; top:30px; right:40px;">
+    <div class="header-action">
        <a href="auto-trade" class="quick-btn">⚡ Auto Trade</a>
     </div>
   </header>
@@ -51,7 +51,7 @@
     <form method="POST" id="apiForm">
       {% csrf_token %}
       <div class="form-grid" id="inputFields"></div>
-      <button type="submit" class="execute-btn">
+      <button type="submit" class="execute-btn" id="executeBtn" style="display: none;">
         <i class="fas fa-bolt"></i> EXECUTE
       </button>
     </form>

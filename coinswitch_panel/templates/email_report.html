@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa; margin: 0; padding: 10px; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .header { background-color: #10b981; color: #ffffff; padding: 25px 20px; text-align: center; }
+        .content { padding: 30px 20px; }
+        
+        .stat-box { padding: 15px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0; background: #f8fafc; }
+        .stat-box-green { border-color: #10b981; background: #ecfdf5; }
+        .stat-box-orange { border-color: #f59e0b; background: #fffef0; }
+        .stat-box-blue { border-color: #3b82f6; background: #eff6ff; }
+        
+        .value { font-size: 24px; font-weight: 700; color: #0f172a; margin-top: 5px; }
+        .value-small { font-size: 18px; }
+        .label { font-size: 12px; text-transform: uppercase; font-weight: 600; color: #64748b; letter-spacing: 0.5px; }
+        
+        .flex-container { text-align: center; font-size: 0; }
+        .flex-item { display: inline-block; width: 100%; max-width: 250px; margin: 0 5px 15px 5px; box-sizing: border-box; font-size: 16px; vertical-align: top; }
+        .flex-item-3 { display: inline-block; width: 100%; max-width: 170px; margin: 0 5px 15px 5px; box-sizing: border-box; font-size: 16px; vertical-align: top; }
+        
+        @media screen and (max-width: 480px) {
+            .flex-item, .flex-item-3 { max-width: 100%; margin: 0 0 15px 0; display: block; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0; font-size: 24px; color: #ffffff;">⚡ Auto Trade Bot Summary</h1>
+        </div>
+        <div class="content">
+            <p style="font-size: 16px; color: #334155; margin-bottom: 25px;">Hi Prands 😂,</p>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 30px;">
+                The CoinSwitch Auto Trade Bot session has completed. Below are the execution statistics for this run.
+            </p>
+            
+            <div class="flex-container">
+                <div class="flex-item">
+                    <div class="stat-box stat-box-green">
+                        <div class="label" style="color: #059669;">Executed Trades</div>
+                        <div class="value" style="color: #047857;">{{ stats.executed_trades }}</div>
+                    </div>
+                </div>
+                <!--[if mso]></td><td style="width: 250px; padding: 0 5px;" valign="top"><![endif]-->
+                <div class="flex-item">
+                    <div class="stat-box stat-box-orange">
+                        <div class="label" style="color: #d97706;">Cancelled Trades</div>
+                        <div class="value" style="color: #b45309;">{{ stats.cancelled_trades }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-container">
+                <div class="flex-item-3">
+                    <div class="stat-box">
+                        <div class="label">USDT Bought</div>
+                        <div class="value value-small">{{ stats.total_usdt }}</div>
+                    </div>
+                </div>
+                <!--[if mso]></td><td style="width: 170px; padding: 0 5px;" valign="top"><![endif]-->
+                <div class="flex-item-3">
+                    <div class="stat-box">
+                        <div class="label">INR Spent</div>
+                        <div class="value value-small">&#8377;{{ stats.total_inr }}</div>
+                    </div>
+                </div>
+                <!--[if mso]></td><td style="width: 170px; padding: 0 5px;" valign="top"><![endif]-->
+                <div class="flex-item-3">
+                    <div class="stat-box stat-box-blue">
+                        <div class="label" style="color: #2563eb;">Avg Price</div>
+                        <div class="value value-small" style="color: #1d4ed8;">&#8377;{{ stats.average_buy_price }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="font-size: 13px; color: #94a3b8; text-align: center; margin-top: 30px;">
+                A detailed CSV report of all fulfilled and partially cancelled orders is attached to this email.
+            </p>
+        </div>
+        <div style="background-color: #1e293b; color: #94a3b8; text-align: center; padding: 15px; font-size: 12px;">
+            &copy; {% now "Y" %} CoinSwitch Premium Auto Trader.
+        </div>
+    </div>
+</body>
+</html>
