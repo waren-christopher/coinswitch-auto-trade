@@ -1,3 +1,4 @@
+
 from django.shortcuts import render,redirect
 from . import coinswitch
 import os,time,threading,requests,csv
@@ -57,6 +58,7 @@ def analyze_bot_performance(api_json_response, export_filename="coinswitch_trade
     total_usdt_bought = 0.0
     total_inr_spent = 0.0
     cancelled_trades = 0
+    
     
     # 1. Define IST Timezone (UTC + 5 hours 30 mins)
     ist_tz = timezone(timedelta(hours=5, minutes=30))
@@ -160,6 +162,7 @@ current_order_id = None
 trade_quantity = ""
 balance = 0
 filled_quantity = 0
+session=requests.session()
 
 def start_auto_trade(request):
     global bot_running,bot_message,current_order_id
@@ -315,7 +318,7 @@ def auto_trade_bot(price_range, min_qty, body):
         print('starttt time is ',datetime.now())
         try:
             # We skip printing orderbook fetch every 3 seconds to avoid terminal spam, but we track status.
-            res = requests.get("https://exchange.coinswitch.co/api/v2/public/depth/?instrument=usdt/inr")
+            res = session.get("https://exchange.coinswitch.co/api/v2/public/depth/?instrument=usdt/inr")
             
             if res.status_code != 200:
                 bot_message=f"Error fetching orderbook: {res.json()}"
@@ -342,7 +345,7 @@ def auto_trade_bot(price_range, min_qty, body):
             if competitor_price is None:
                 bot_message = "Scanning: No competitor found meeting min quantity criteria."
                 print("No valid competitor levels found. Waiting...")
-                #time.sleep(1)
+                time.sleep(1)
                 continue
 
             target_price=buy_sell_decision(side,competitor_price,limit_threshold,current_order_id)
@@ -379,7 +382,7 @@ def auto_trade_bot(price_range, min_qty, body):
                     bot_message = f"✅ Active {side.upper()} order at ₹{target_price}"
                     print(f"✅ Order Placed Successfully. ID: {current_order_id} at ₹{target_price}")
                     print('initial order end time is')
-                 #   time.sleep(1)
+                    time.sleep(1)
                     continue
                 else:
                     bot_message = f"Failed to place order: {resp_data.get('message', 'API Error')}"
@@ -387,37 +390,31 @@ def auto_trade_bot(price_range, min_qty, body):
                     bot_running = False
                     return
             else:
+ 
                     try:
-                        def check_fullfilled():
-                            global filled_quantity,order_status
-                            order_sta=coinswitch.particular_order_details(current_order_id).json()
-                            filled_quantity=float(order_sta['data']['filledQuoteQuantity'])
-                            order_status =order_sta['data']['status']
-                        print(order_status)
-                        threading.Thread(target=check_fullfilled).start()
-                        if order_status == 'FULFILLED': # or 100 > float(body['quantity']) - float(order_det['data']['filledQuoteQuantity']):
-                            print(f"🎉 Order {current_order_id} FULFILLED! Re-evaluating capacity...")
-                            bot_message = f"Order fulfilled! Checking available balance to continue..."
-                            # balance=coinswitch.broker_balance(body).json()
-                            # balance=float(balance['data']['Available']['inr'])
+                        order_det=coinswitch.particular_order_details(current_order_id).json()
+                        filled_quantity=float(order_det['data']['filledQuoteQuantity'])
+                        if order_det['data']['status'] == 'FULFILLED': # or 100 > float(body['quantity']) - float(order_det['data']['filledQuoteQuantity']):
                             if 300 > balance:
-                                print(f"🛑 Balance ({balance}) below min required 300 INR. Trade completed.")
                                 bot_running = False
-                                bot_message = "✅ Auto Trade successfully completed (Low Balance)" 
-                                threading.Thread(target=finish_auto_trade_and_report).start()
+                                bot_message = "Auto Trade successfully completed" 
                                 return
                             raw_quantity= float(float(trade_quantity) if balance > float(trade_quantity) else str(balance))
                             body['quantity'] = str(round(raw_quantity, 2))
-                            order_print = "next"
-                            current_order_id = None
-                            current_placed_price = None
+                            latest_order_id = coinswitch.buy_limit_order(body).json() if side == 'buy' else coinswitch.sell_limit_order(body).json()
+                            print('order fullfilled so placed a new order')
+                        
+                            current_order_id = latest_order_id['data']['orderId'] 
+                            current_placed_price = body['limitPrice']
+                            bot_message = "order fullfilled so placed a new order..."
+                            print('sleeping')
+                            time.sleep(3)
                             continue
                     except Exception as e:
                         print('erorroro',str(e))
                         bot_message = f"ererr {str(e)}"
                         bot_running = False
                         return
-
                 
 
                 # CHECK IF WE ARE STILL AT THE TOP
@@ -465,10 +462,11 @@ def auto_trade_bot(price_range, min_qty, body):
         except Exception as e:
             print(f"⚠️ An unexpected error occurred in loop: {e}")
             bot_message = f"Temporarily disrupted: {str(e)}"
+            time.sleep(5)
             
         # print('sleeping')
         print('end time is ',datetime.now())
-     #   time.sleep(1) # Wait before hitting the API again
+        time.sleep(1) # Wait before hitting the API again
 
 
 
