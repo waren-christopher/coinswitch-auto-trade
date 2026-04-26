@@ -247,39 +247,16 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
             return "price range reached"
         return target_price
     
-# def fetch_order_details(order_id):
-#     global order_details_result
-#     try:
-#         res = coinswitch.particular_order_details(order_id).json()
-#         order_details_result = res
-#     except Exception as e:
-#         print("Error in order details:", e)
-
 
 
 
 def replace_order(cancel_body,body):
     global bot_running, bot_message,current_order_id,trade_quantity,balance,filled_quantity
     try:
-        def cancel_order():
-            global current_order_id
-            cancel_res = coinswitch.cancel_order({'orderId': current_order_id}).json()
-            current_order_id = None
-           # print('thread result for Cancel response:', cancel_res)
-    
-        # Reset states so the next loop tick places a brand new order at the new target
-       # print(f"Fetching details for order {current_order_id} to calculate remaining quantity.")
-        # order_det=coinswitch.particular_order_details(current_order_id).json()
-        # filled_quantity=float(order_det['data']['filledQuoteQuantity'])
-        # print('got file quantity',filled_quantity)
-        # balance=coinswitch.broker_balance(body).json()
-        # balance=float(balance['data']['Available']['inr'])
-        # print('getting broker balance ',balance)
         print('calculating quantity',float(body['quantity']) - filled_quantity)
         quant=float(body['quantity']) - filled_quantity 
         actual_affordable_quant = quant if balance >= quant else balance
-
-        threading.Thread(target=cancel_order).start()
+        coinswitch.cancel_order({'orderId': current_order_id}).json()
         if 1000 > quant and balance > float(trade_quantity):
           print('getting total quantity from trade_quntity ',trade_quantity)
           return trade_quantity
@@ -373,7 +350,7 @@ def auto_trade_bot(price_range, min_qty, body):
                         global balance
                         res = coinswitch.broker_balance(body).json()
                         balance=float(res['data']['Available']['inr'])
-                        print('threading balance is ',balance)
+                        print('balance is ',balance)
                     threading.Thread(target=fetch_balance, args=(body,)).start()
                     print('thread started,,,,')
                 if response.status_code == 200:
@@ -402,6 +379,7 @@ def auto_trade_bot(price_range, min_qty, body):
                                    bot_message = "Auto Trade successfully completed" 
                                    return
                                 current_order_id = None
+                                body['quantity']=trade_quantity
                                 continue
                             raw_quantity= float(float(trade_quantity) if balance > float(trade_quantity) else str(balance))
                             body['quantity'] = str(round(raw_quantity, 2))
