@@ -271,10 +271,10 @@ def replace_order(cancel_body,body):
         return str(round(actual_affordable_quant, 2))
     except requests.exceptions.ConnectionError as e:
             print(f"📡 [NETWORK] Connection dropped in replace_order. Will retry. Error: {str(e)}")
-            time.sleep(8)
+            time.sleep(5)
             return ""
     except Exception as e:
-        print(f"💥 CRASH IN REPLACE BLOCK: {str(e)}") # <--- Now you will see the error!
+        print(f"💥 CRASH IN REPLACE BLOCK: {str(e)}")
         bot_running=False
         bot_message = f"error : {str(e)}"
         print(f"error : {str(e)}")
@@ -284,7 +284,6 @@ def auto_trade_bot(price_range, min_qty, body):
     global bot_running, bot_message,current_order_id,trade_quantity,balance,filled_quantity
     order_print  = "initial"
     current_placed_price = None
-    order_status="None"
     side = body['side'].lower()  # 'buy' or 'sell'
     limit_threshold = float(price_range) # Max price to buy, or Min price to sell
 
@@ -292,7 +291,7 @@ def auto_trade_bot(price_range, min_qty, body):
     print(f"🚀 Bot initialized: Side={side.upper()}, Limit Threshold={limit_threshold}, Min Qty={min_qty}")
 
     while bot_running:
-        print('starttt time is ',datetime.now())
+        loop_start_time = datetime.now()
         try:
             # We skip printing orderbook fetch every 3 seconds to avoid terminal spam, but we track status.
             res = session.get("https://exchange.coinswitch.co/api/v2/public/depth/?instrument=usdt/inr")
@@ -322,7 +321,11 @@ def auto_trade_bot(price_range, min_qty, body):
             if competitor_price is None:
                 bot_message = "Scanning: No competitor found meeting min quantity criteria."
                 print("No valid competitor levels found. Waiting...")
-                time.sleep(1)
+                loop_end_time = datetime.now()
+                elapsed_seconds = (loop_end_time - loop_start_time).total_seconds()
+                print(f"🏁 Loop completed in {elapsed_seconds:.3f} seconds")
+                if elapsed_seconds < 1:
+                    time.sleep(1)
                 continue
 
             target_price=buy_sell_decision(side,competitor_price,limit_threshold,current_order_id)
@@ -358,8 +361,11 @@ def auto_trade_bot(price_range, min_qty, body):
                     current_placed_price = target_price
                     bot_message = f"✅ Active {side.upper()} order at ₹{target_price}"
                     print(f"✅ Order Placed Successfully. ID: {current_order_id} at ₹{target_price}")
-                    print('initial order end time is')
-                    time.sleep(1)
+                    loop_end_time = datetime.now()
+                    elapsed_seconds = (loop_end_time - loop_start_time).total_seconds()
+                    print(f"🏁 Loop completed in {elapsed_seconds:.3f} seconds")
+                    if elapsed_seconds < 1:
+                        time.sleep(1)
                     continue
                 else:
                     bot_message = f"Failed to place order: {resp_data.get('message', 'API Error')}"
@@ -389,8 +395,11 @@ def auto_trade_bot(price_range, min_qty, body):
                             current_order_id = latest_order_id['data']['orderId'] 
                             current_placed_price = body['limitPrice']
                             bot_message = "order fullfilled so placed a new order..."
-                            print('sleeping')
-                            time.sleep(3)
+                            loop_end_time = datetime.now()
+                            elapsed_seconds = (loop_end_time - loop_start_time).total_seconds()
+                            print(f"🏁 Loop completed in {elapsed_seconds:.3f} seconds")
+                            if elapsed_seconds < 1:
+                                time.sleep(1)
                             continue
                     except Exception as e:
                         print('erorroro',str(e))
@@ -415,7 +424,7 @@ def auto_trade_bot(price_range, min_qty, body):
                     if target_price == "price range reached":
                         print("Price range reached during replacement. Pausing...")
                         bot_message = "Price range reached during replacement. Pausing..."
-                        time.sleep(5)
+                        time.sleep(3)
                         continue
                     body['limitPrice'] = str(target_price)
                     print(f"Sending API request to place new order at {target_price}...")
@@ -447,10 +456,11 @@ def auto_trade_bot(price_range, min_qty, body):
             time.sleep(5)
             
         # print('sleeping')
-        print('end time is ',datetime.now())
-        time.sleep(1) # Wait before hitting the API again
-
-
+        loop_end_time = datetime.now()
+        elapsed_seconds = (loop_end_time - loop_start_time).total_seconds()
+        print(f"🏁 Loop completed in {elapsed_seconds:.3f} seconds")
+        if elapsed_seconds < 1.15:
+            time.sleep(1)
 
 #enddddddddddddddddddddddd
 
