@@ -396,9 +396,13 @@ def auto_trade_bot(price_range, min_qty, body):
                         filled_quantity=float(order_det['data']['filledQuoteQuantity'])
                         if order_det['data']['status'] == 'FULFILLED': # or 100 > float(body['quantity']) - float(order_det['data']['filledQuoteQuantity']):
                             if 300 > balance:
-                                bot_running = False
-                                bot_message = "Auto Trade successfully completed" 
-                                return
+                                fetch_balance(body)
+                                if 1000 > balance:
+                                   bot_running = False
+                                   bot_message = "Auto Trade successfully completed" 
+                                   return
+                                current_order_id = None
+                                continue
                             raw_quantity= float(float(trade_quantity) if balance > float(trade_quantity) else str(balance))
                             body['quantity'] = str(round(raw_quantity, 2))
                             latest_order_id = coinswitch.buy_limit_order(body).json() if side == 'buy' else coinswitch.sell_limit_order(body).json()
