@@ -258,9 +258,27 @@ pre::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 .json-null { color: #94a3b8; font-style: italic; }
 
 /* Nice Table */
-.nice-table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 800px; }
-.nice-table th, .nice-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; }
-.nice-table th { font-family: 'Outfit'; color: var(--text-muted); font-weight: 600; background: rgba(0,0,0,0.3); }
+/* Nice Table */
+.nice-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 10px; 
+}
+
+.nice-table th, .nice-table td { 
+    padding: 12px 15px; 
+    text-align: left; 
+    border-bottom: 1px solid var(--glass-border); 
+    font-size: 0.9rem; 
+    white-space: nowrap; /* Prevents text and decimals from breaking */
+}
+
+.nice-table th { 
+    font-family: 'Outfit'; 
+    color: var(--text-muted); 
+    font-weight: 600; 
+    background: rgba(0,0,0,0.3); 
+}
 .nice-table td { color: #d1d5db; }
 .nice-table tbody tr:hover { background: rgba(255,255,255,0.02); }
 .text-buy { color: var(--accent-green) !important; font-weight: 600; }
@@ -461,5 +479,70 @@ button[data-api="cancel_all_order"] {
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
 }
 
+/* Fix for the white-on-white dropdown issue */
+select.account-dropdown option {
+    background-color: #1e293b; /* A nice dark slate color */
+    color: #ffffff;            /* Keep the text white */
+}
+
+/* Optional: Ensure the main select box itself also stays dark */
+select.account-dropdown {
+    background-color: #0f172a; 
+    color: #ffffff;
+}
 
 
+@media (max-width: 1024px) {
+    /* Hide the standard table header */
+    .nice-table thead {
+        display: none;
+    }
+
+    /* Convert rows to block elements (cards) */
+    .nice-table, .nice-table tbody, .nice-table tr, .nice-table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Style the row as a card */
+    .nice-table tr {
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Align data using flexbox */
+    .nice-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 10px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        white-space: nowrap; /* Keeps data on one line */
+    }
+
+    .nice-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Pull the label from the data-label attribute in JS */
+    .nice-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-muted);
+        text-align: left;
+        margin-right: 15px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.85rem;
+    }
+
+    /* Adjust the copy button alignment slightly for mobile */
+    .copy-icon-btn {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
