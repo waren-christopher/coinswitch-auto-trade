@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (orders) {
+if (orders) {
             let html = '<div style="overflow-x:auto;"><table class="nice-table"><thead><tr>' +
                 '<th>Order ID</th><th>Instrument</th><th>Side</th><th>Status</th>' +
                 '<th>Limit Price</th><th>Quantity</th><th>Filled Qty</th>' +
@@ -142,17 +142,19 @@ document.addEventListener("DOMContentLoaded", () => {
             orders.forEach(o => {
                 let d = new Date(parseInt(o.createdAt || 0) * 1000).toLocaleString();
                 html += `<tr>
-                    <td style="white-space: nowrap;">
+                    <td data-label="Order ID" style="white-space: nowrap;">
                         ${o.orderId}
                         <button class="copy-icon-btn" onclick="window.copyText('${o.orderId}')" title="Copy Order ID" style="background: transparent; border: none; cursor: pointer; margin-left: 8px; color: #3b82f6; transition: color 0.2s;">
                             <i class="fas fa-copy"></i>
                         </button>
                     </td>
-                    <td>${o.instrument}</td>
-                    <td class="${o.side==='BUY'?'text-buy':'text-sell'}">${o.side}</td>
-                    <td>${o.status}</td><td>${o.limitPrice}</td><td>${o.quantity}</td>
-                    <td>${o.filledQuantity}</td>
-                    <td>${d}</td>
+                    <td data-label="Instrument">${o.instrument}</td>
+                    <td data-label="Side" class="${o.side==='BUY'?'text-buy':'text-sell'}">${o.side}</td>
+                    <td data-label="Status">${o.status}</td>
+                    <td data-label="Limit Price">${o.limitPrice}</td>
+                    <td data-label="Quantity">${o.quantity}</td>
+                    <td data-label="Filled Qty">${o.filledQuantity}</td>
+                    <td data-label="Created At">${d}</td>
                 </tr>`;
             });
             html += '</tbody></table></div>';
