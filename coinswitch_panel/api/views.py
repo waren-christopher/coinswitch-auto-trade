@@ -136,19 +136,23 @@ def analyze_bot_performance(api_json_response, start_order_id=None, export_filen
 
 
 
+# def login_view(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+# 
+#         # 🔥 Replace this with psycopg2 query
+#         if username == "admin" and password == "1234":
+#             request.session['user'] = username   # ✅ create session
+#             return redirect('dashboard')
+#         else:
+#             return render(request, "login.html", {"error": "Invalid credentials"})
+# 
+#     return render(request, "login.html")
+
 def login_view(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-
-        # 🔥 Replace this with psycopg2 query
-        if username == "admin" and password == "1234":
-            request.session['user'] = username   # ✅ create session
-            return redirect('dashboard')
-        else:
-            return render(request, "login.html", {"error": "Invalid credentials"})
-
-    return render(request, "login.html")
+    # Bypass login page completely
+    return redirect('dashboard')
 def auto_trade_page(request):
     return render(request, "auto_trade.html")
 
@@ -466,8 +470,8 @@ def auto_trade_bot(price_range, min_qty, body):
 #enddddddddddddddddddddddd
 
 def dashboard(request):
-    if not request.session.get('user'):
-        return redirect('login')
+    # if not request.session.get('user'):
+    #     return redirect('login')
         
     if request.method == "GET":
         return render(request, "dashboard.html")

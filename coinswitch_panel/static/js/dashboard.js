@@ -181,6 +181,11 @@ if (orders) {
         } catch {
             responseBox.textContent = rawData;
         }
+
+        // Auto-scroll to response box for mobile responsiveness
+        setTimeout(() => {
+            responseSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
     }
 
     /* ================================
