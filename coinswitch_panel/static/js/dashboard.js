@@ -144,7 +144,7 @@ if (orders) {
                 html += `<tr>
                     <td data-label="Order ID" style="white-space: nowrap;">
                         ${o.orderId}
-                        <button class="copy-icon-btn" onclick="window.copyText('${o.orderId}')" title="Copy Order ID" style="background: transparent; border: none; cursor: pointer; margin-left: 8px; color: var(--accent-gold); transition: color 0.2s;">
+                        <button class="copy-icon-btn" onclick="window.copyText('${o.orderId}')" title="Copy Order ID" style="background: transparent; border: none; cursor: pointer; margin-left: 8px; color: #3b82f6; transition: color 0.2s;">
                             <i class="fas fa-copy"></i>
                         </button>
                     </td>
@@ -181,11 +181,6 @@ if (orders) {
         } catch {
             responseBox.textContent = rawData;
         }
-
-        // Auto-scroll to response box for mobile responsiveness
-        setTimeout(() => {
-            responseSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 100);
     }
 
     /* ================================
