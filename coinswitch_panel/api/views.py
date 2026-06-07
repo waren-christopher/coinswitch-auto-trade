@@ -466,8 +466,8 @@ def auto_trade_bot(price_range, min_qty, body):
 #enddddddddddddddddddddddd
 
 def dashboard(request):
-    if not request.session.get('user'):
-        return redirect('login')
+    # if not request.session.get('user'):
+    #     return redirect('login')
         
     if request.method == "GET":
         return render(request, "dashboard.html")
