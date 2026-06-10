@@ -275,9 +275,9 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
         if target_price > limit_threshold:
             bot_message = f"Stopped: Target {target_price} exceeded max limit of {limit_threshold}."
             print(f"🛑 {bot_message}")
-            if order_id:
-                coinswitch.cancel_order({'orderId': order_id})
-                current_order_id = None
+            # if order_id:
+            #     coinswitch.cancel_order({'orderId': order_id})
+            #     current_order_id = None
             return "price range reached"
         return target_price
     else: # sell
@@ -287,9 +287,9 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
         if target_price < limit_threshold:
             bot_message = f"Stopped: Target {target_price} dropped below min limit of {limit_threshold}."
             print(f"🛑 {bot_message}")
-            if order_id:
-                coinswitch.cancel_order({'orderId': order_id})
-                current_order_id = None
+            # if order_id:
+            #     coinswitch.cancel_order({'orderId': order_id})
+            #     current_order_id = None
             return "price range reached"
         return target_price
     
@@ -486,6 +486,10 @@ def auto_trade_bot(price_range, min_qty, body):
                     latest_order_id = coinswitch.buy_limit_order(body).json() if side == 'buy' else coinswitch.sell_limit_order(body).json()
                     # print('order info',latest_order_id)
                     try:
+                      if response.status_code != 200:
+                        # order_det=coinswitch.particular_order_details(current_order_id).json()
+                        # filled_quantity=float(order_det['data']['filledQuoteQuantity'])
+                        continue
                       current_order_id = latest_order_id['data']['orderId'] 
                     except Exception as e:
                         print("error while placing the order will retry again",current_order_id)
