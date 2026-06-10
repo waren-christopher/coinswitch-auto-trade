@@ -76,10 +76,15 @@ document.addEventListener("DOMContentLoaded", () => {
             username: "warenx1"
         },
 
-        cancel_order: { orderId: "" }
+        cancel_order: { orderId: "" },
+
+        average_trade_price: {
+            start_date: "",
+            end_date: ""
+        }
     };
 
-    const optionalFields = ["subaddress"];
+    const optionalFields = ["subaddress", "end_date"];
 
     /* ================================
        JSON SYNTAX HIGHLIGHTER
@@ -283,6 +288,7 @@ if (orders) {
 
             const isOptional = optionalFields.includes(key);
             const isLocked = ["address", "fromID", "toID"].includes(key);
+            const inputType = (key === "start_date" || key === "end_date") ? "datetime-local" : "text";
 
             const group = document.createElement("div");
             group.className = "form-group";
@@ -294,7 +300,7 @@ if (orders) {
                         ? "<span style='color:#94a3b8;font-size:0.65rem;'>(optional)</span>"
                         : "<span style='color:#ef4444;'> *</span>"}
                 </span>
-                <input name="${key}" value="${value}" ${isLocked ? "readonly" : ""} />
+                <input type="${inputType}" name="${key}" value="${value}" ${isLocked ? "readonly" : ""} />
                 <div id="err_${key}" class="error-message">Required</div>
             `;
 
@@ -353,7 +359,7 @@ if (orders) {
             return;
         }
 
-        if (btn.classList.contains("quick-btn")) {
+        if (btn.classList.contains("quick-btn") && baseApi !== "average_trade_price") {
             const fd = new FormData();
             fd.append("api", api);
             performApiCall(fd);

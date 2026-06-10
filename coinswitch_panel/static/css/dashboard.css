@@ -491,6 +491,12 @@ select.account-dropdown {
     color: #ffffff;
 }
 
+/* Calendar Icon Invert for dark theme */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
 @media (max-width: 1024px) {
     .nice-table thead { display: none; }
     
