@@ -327,6 +327,18 @@ def replace_order(cancel_body,body):
         print(f"error : {str(e)}")
         return ""
 
+def check_balance(body):
+    global trade_quantity,bot_running,bot_message
+    res = coinswitch.broker_balance(body).json()
+    balance=float(res['data']['Available']['inr'])
+    print('balance is ',balance)
+    quan= trade_quantity if balance > float(body['quantity']) else balance
+    if 500 > quan:
+        bot_running = False
+        bot_message ="Auto Trade completed"
+        time.sleep(5)
+    return str(quan)
+
 def auto_trade_bot(price_range, min_qty, body):
     global bot_running, bot_message,current_order_id,trade_quantity,balance,filled_quantity,calculated_order_id
     order_print  = "initial"
@@ -444,7 +456,8 @@ def auto_trade_bot(price_range, min_qty, body):
                                 current_order_id = latest_order_id['data']['orderId'] 
                                 print('order fullfilled so placed a new order')
                             except Exception as e:
-                               print("error while placing the order will retry again",current_order_id)
+                               print("error while placing the order will retry again","order details",latest_order_id,"current order id",current_order_id)
+                               body['quantity']= check_balance(body)
                                current_order_id = None
                                continue
                             current_placed_price = body['limitPrice']
@@ -489,6 +502,7 @@ def auto_trade_bot(price_range, min_qty, body):
                       current_order_id = latest_order_id['data']['orderId'] 
                     except Exception as e:
                         print("error while placing the order will retry again",current_order_id)
+                        body['quantity']= check_balance(body)
                         current_order_id = None
                         continue
                     current_placed_price = target_price
