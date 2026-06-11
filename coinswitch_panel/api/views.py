@@ -486,10 +486,6 @@ def auto_trade_bot(price_range, min_qty, body):
                     latest_order_id = coinswitch.buy_limit_order(body).json() if side == 'buy' else coinswitch.sell_limit_order(body).json()
                     # print('order info',latest_order_id)
                     try:
-                      if latest_order_id.status_code != 200:
-                        # order_det=coinswitch.particular_order_details(current_order_id).json()
-                        # filled_quantity=float(order_det['data']['filledQuoteQuantity'])
-                        continue
                       current_order_id = latest_order_id['data']['orderId'] 
                     except Exception as e:
                         print("error while placing the order will retry again",current_order_id)
