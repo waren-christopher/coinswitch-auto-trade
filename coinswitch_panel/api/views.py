@@ -337,7 +337,8 @@ def check_balance(body):
         bot_running = False
         bot_message ="Auto Trade completed"
         time.sleep(5)
-    return str(quan)
+        return ""
+    return str(round(quan,2))
 
 def auto_trade_bot(price_range, min_qty, body):
     global bot_running, bot_message,current_order_id,trade_quantity,balance,filled_quantity,calculated_order_id
@@ -458,6 +459,8 @@ def auto_trade_bot(price_range, min_qty, body):
                             except Exception as e:
                                print("error while placing the order will retry again","order details",latest_order_id,"current order id",current_order_id)
                                body['quantity']= check_balance(body)
+                               if not body['quantity']:
+                                   break
                                current_order_id = None
                                continue
                             current_placed_price = body['limitPrice']
@@ -503,6 +506,8 @@ def auto_trade_bot(price_range, min_qty, body):
                     except Exception as e:
                         print("error while placing the order will retry again",current_order_id)
                         body['quantity']= check_balance(body)
+                        if not body['quantity']:
+                            break
                         current_order_id = None
                         continue
                     current_placed_price = target_price
