@@ -275,9 +275,9 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
         if target_price > limit_threshold:
             bot_message = f"Stopped: Target {target_price} exceeded max limit of {limit_threshold}."
             print(f"🛑 {bot_message}")
-            # if order_id:
-            #     coinswitch.cancel_order({'orderId': order_id})
-            #     current_order_id = None
+            if order_id:
+                coinswitch.cancel_order({'orderId': order_id})
+                current_order_id = None
             return "price range reached"
         return target_price
     else: # sell
@@ -287,9 +287,9 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
         if target_price < limit_threshold:
             bot_message = f"Stopped: Target {target_price} dropped below min limit of {limit_threshold}."
             print(f"🛑 {bot_message}")
-            # if order_id:
-            #     coinswitch.cancel_order({'orderId': order_id})
-            #     current_order_id = None
+            if order_id:
+                coinswitch.cancel_order({'orderId': order_id})
+                current_order_id = None
             return "price range reached"
         return target_price
     
