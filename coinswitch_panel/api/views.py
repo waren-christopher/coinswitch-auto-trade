@@ -299,10 +299,8 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
 def replace_order(cancel_body,body):
     global bot_running, bot_message,current_order_id,trade_quantity,balance,filled_quantity
     try:
-        print('calculating quantity',float(body['quantity']) - filled_quantity)
         quant=float(body['quantity']) - filled_quantity 
         actual_affordable_quant = quant if quant >= 1000 else balance
-        print('acsdfjsjfsjffsdsf',actual_affordable_quant)
         coinswitch.cancel_order({'orderId': current_order_id}).json()
         if 1000 > quant and balance > float(trade_quantity):
           print('getting total quantity from trade_quntity ',trade_quantity)
