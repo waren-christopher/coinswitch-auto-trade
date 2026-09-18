@@ -266,7 +266,7 @@ def auto_trade_status(request):
     return JsonResponse({"running": bot_running,"message": bot_message})
 
 
-def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
+def buy_sell_decision(side,competitor_price,limit_threshold,order_id,body):
     global bot_message,current_order_id
     if side == 'buy':
         target_price = round(competitor_price + 0.01, 2)
@@ -277,6 +277,10 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
             print(f"🛑 {bot_message}")
             if order_id:
                 coinswitch.cancel_order({'orderId': order_id})
+                order_det=coinswitch.particular_order_details(order_id).json()
+                filled_quantity=float(order_det['data']['filledQuoteQuantity'])
+                body['quantity'] = str(float(body['quantity']) - filled_quantity)
+                print('updated quantity for future trade : ',body['quantity'])
                 current_order_id = None
             return "price range reached"
         return target_price
@@ -289,6 +293,9 @@ def buy_sell_decision(side,competitor_price,limit_threshold,order_id):
             print(f"🛑 {bot_message}")
             if order_id:
                 coinswitch.cancel_order({'orderId': order_id})
+                order_det=coinswitch.particular_order_details(order_id).json()
+                filled_quantity=float(order_det['data']['filledQuoteQuantity'])
+                body['quantity'] = str(float(body['quantity']) - filled_quantity)
                 current_order_id = None
             return "price range reached"
         return target_price
@@ -389,7 +396,7 @@ def auto_trade_bot(price_range, min_qty, body):
                     time.sleep(1)
                 continue
 
-            target_price=buy_sell_decision(side,competitor_price,limit_threshold,current_order_id)
+            target_price=buy_sell_decision(side,competitor_price,limit_threshold,current_order_id,body)
             if target_price == "price range reached":
                 time.sleep(5)
                 continue
@@ -495,7 +502,7 @@ def auto_trade_bot(price_range, min_qty, body):
                     else:
                         print("No quantity left or min threshold not met. Exiting replacement flow.")
                         break
-                    target_price=buy_sell_decision(body['side'].lower(),competitor_price,limit_threshold,current_order_id)
+                    target_price=buy_sell_decision(body['side'].lower(),competitor_price,limit_threshold,current_order_id,body)
                     if target_price == "price range reached":
                         print("Price range reached during replacement. Pausing...")
                         bot_message = "Price range reached during replacement. Pausing..."

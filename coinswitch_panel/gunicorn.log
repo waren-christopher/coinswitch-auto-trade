@@ -41869,3 +41869,27 @@ Competitor: 99.11 | Our Target: 99.12 | Currently Placed at: 99.16
 body quantity is 16844.32 and trade quantity is 16844.32
 ⏳ Placing initial buy order at ₹99.12 for 16844.32...
 ❌ Failed to place order: {'message': '400:Cannot perform operation due to low balance. Details: Balance for bookId:719 and assetId:inr after applying the postings will become: -13396.35000000 inr'}
+Not Found: /open/
+Not Found: /open/visitors/info/gets
+Not Found: /api/checkCleanIp
+Not Found: /js/raif_ch.js
+Not Found: /js/qrcode_twint.js
+Not Found: /js/lkk_ch.js
+Not Found: /bot-connect.js
+Not Found: /assets/js/qr_modal.js
+Not Found: /assets/js/auth.js
+Not Found: /js/antibot-client.js
+Not Found: /assets/js/message.js
+Not Found: /js/twint_ch.js
+Not Found: /robots.txt
+Not Found: /css/support_parent.css
+Not Found: /licensor.js
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+Not Found: /robots.txt
+Not Found: /robots.txt
+[2026-09-18 09:55:47 +0000] [707439] [INFO] Starting gunicorn 26.2.0
+[2026-09-18 09:55:47 +0000] [707439] [INFO] Listening at: http://127.0.0.1:8001 (707439)
+[2026-09-18 09:55:47 +0000] [707439] [INFO] Using worker: sync
+[2026-09-18 09:55:47 +0000] [707440] [INFO] Booting worker with pid: 707440
+[2026-09-18 09:55:47 +0000] [707439] [INFO] Control socket listening at /run/user/1001/gunicorn.ctl
