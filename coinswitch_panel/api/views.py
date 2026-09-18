@@ -546,7 +546,8 @@ def auto_trade_bot(price_range, min_qty, body):
         loop_end_time = datetime.now()
         elapsed_seconds = (loop_end_time - loop_start_time).total_seconds()
         print(f"🏁 Loop completed in {elapsed_seconds:.3f} seconds")
-        if elapsed_seconds < 1.15:
+        if elapsed_seconds < 1:
+            print('sleeping 1 second')
             time.sleep(1)
 
 #enddddddddddddddddddddddd

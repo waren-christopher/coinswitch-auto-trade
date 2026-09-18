@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
     "140.245.208.132",
     #"zentroagencies.site",
     "localhost",
-    "orders.zentroagencies.site",
+    "orders.warenxcashflow.site",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
