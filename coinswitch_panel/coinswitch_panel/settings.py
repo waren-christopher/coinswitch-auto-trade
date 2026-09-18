@@ -31,9 +31,14 @@ SECRET_KEY = 'django-insecure-+r+50$cf%hn=)z66k##p=x5rwcbx3m#r1)*=(zb(e9syuk4pxc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = [
-    "127.0.0.1",
+    "140.245.208.132",
+    #"zentroagencies.site",
     "localhost",
-    "orders.warenxcashflow.site",
+    "orders.zentroagencies.site",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://orders.zentroagencies.site",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -125,7 +130,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
