@@ -76,10 +76,15 @@ document.addEventListener("DOMContentLoaded", () => {
             username: "warenx1"
         },
 
-        cancel_order: { orderId: "" }
+        cancel_order: { orderId: "" },
+
+        average_trade_price: {
+            start_date: "",
+            end_date: ""
+        }
     };
 
-    const optionalFields = ["subaddress"];
+    const optionalFields = ["subaddress", "end_date"];
 
     /* ================================
        JSON SYNTAX HIGHLIGHTER
@@ -133,20 +138,28 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (orders) {
+if (orders) {
             let html = '<div style="overflow-x:auto;"><table class="nice-table"><thead><tr>' +
                 '<th>Order ID</th><th>Instrument</th><th>Side</th><th>Status</th>' +
-                '<th>Limit Price</th><th>Quantity</th><th>Filled Qty</th><th>Filled Quote</th>' +
-                '<th>Cancelled Qty</th><th>Created At</th></tr></thead><tbody>';
+                '<th>Limit Price</th><th>Quantity</th><th>Filled Qty</th>' +
+                '<th>Created At</th></tr></thead><tbody>';
             
             orders.forEach(o => {
                 let d = new Date(parseInt(o.createdAt || 0) * 1000).toLocaleString();
                 html += `<tr>
-                    <td>${o.orderId}</td><td>${o.instrument}</td>
-                    <td class="${o.side==='BUY'?'text-buy':'text-sell'}">${o.side}</td>
-                    <td>${o.status}</td><td>${o.limitPrice}</td><td>${o.quantity}</td>
-                    <td>${o.filledQuantity}</td><td>${o.filledQuoteQuantity}</td>
-                    <td>${o.cancelledQuantity}</td><td>${d}</td>
+                    <td data-label="Order ID" style="white-space: nowrap;">
+                        ${o.orderId}
+                        <button class="copy-icon-btn" onclick="window.copyText('${o.orderId}')" title="Copy Order ID" style="background: transparent; border: none; cursor: pointer; margin-left: 8px; color: #3b82f6; transition: color 0.2s;">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </td>
+                    <td data-label="Instrument">${o.instrument}</td>
+                    <td data-label="Side" class="${o.side==='BUY'?'text-buy':'text-sell'}">${o.side}</td>
+                    <td data-label="Status">${o.status}</td>
+                    <td data-label="Limit Price">${o.limitPrice}</td>
+                    <td data-label="Quantity">${o.quantity}</td>
+                    <td data-label="Filled Qty">${o.filledQuantity}</td>
+                    <td data-label="Created At">${d}</td>
                 </tr>`;
             });
             html += '</tbody></table></div>';
@@ -254,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <select id="accountSelect" class="account-dropdown">
                         <option value="311536374533912">warenx tmb</option>
-                        <option value="136628600000031">warenx yes bank</option>
+
                     </select>
 
                     <input type="hidden" name="accountNumber" id="hiddenAccountNumber" value="311536374533912" />
@@ -275,6 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const isOptional = optionalFields.includes(key);
             const isLocked = ["address", "fromID", "toID"].includes(key);
+            const inputType = (key === "start_date" || key === "end_date") ? "datetime-local" : "text";
 
             const group = document.createElement("div");
             group.className = "form-group";
@@ -286,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         ? "<span style='color:#94a3b8;font-size:0.65rem;'>(optional)</span>"
                         : "<span style='color:#ef4444;'> *</span>"}
                 </span>
-                <input name="${key}" value="${value}" ${isLocked ? "readonly" : ""} />
+                <input type="${inputType}" name="${key}" value="${value}" ${isLocked ? "readonly" : ""} />
                 <div id="err_${key}" class="error-message">Required</div>
             `;
 
@@ -345,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (btn.classList.contains("quick-btn")) {
+        if (btn.classList.contains("quick-btn") && baseApi !== "average_trade_price") {
             const fd = new FormData();
             fd.append("api", api);
             performApiCall(fd);
